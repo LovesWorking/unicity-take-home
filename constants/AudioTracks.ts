@@ -14,6 +14,15 @@ export const AUDIO_CONFIG = {
 export const SAMPLE_TRACKS: AudioTrack[] = [
   {
     id: 0,
+    url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/0b/f1/42/0bf142d3-06f9-3923-865e-044fbab298d9/mzaf_12824995046028251434.plus.aac.ep.m4a",
+    albumArt:
+      "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/53/ce/18/53ce18db-61f3-ac44-c27d-1ce4ea89fbe1/886447400753.jpg/300x300bb.webp",
+    title: "Untethered Angel",
+    artist: "Dream Theater",
+    backgroundColor: "#2E2E2E",
+  },
+  {
+    id: 1,
     url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/72/53/c7/7253c7f2-b61f-baf3-3b4e-08171e35cfea/mzaf_921634286400386475.plus.aac.p.m4a",
     albumArt:
       "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/54/50/75/54507577-9e1d-c2c0-79dd-81e65aa7fb9d/197342550925_cover.jpg/247x247bb.jpg",

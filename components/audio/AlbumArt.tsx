@@ -14,7 +14,7 @@ import Animated, {
 
 const styles = StyleSheet.create({
   albumArtShadow: {
-    boxShadow: `0px 0px 52px 20px rgba(242, 215, 230, 0.6)`, // Increased by ~30% for more prominent glow
+    boxShadow: `0px 0px 78px 30px rgba(242, 215, 230, 0.7)`, // 1.5x stronger glow - balanced intensity
   },
 });
 
