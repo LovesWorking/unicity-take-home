@@ -12,7 +12,7 @@ import Animated, {
 
 const styles = StyleSheet.create({
   albumArtShadow: {
-    boxShadow: `0px 0px 40px 15px rgba(213, 194, 230, 0.6)`, // More prominent glow effect like the reference image
+    boxShadow: `0px 0px 52px 20px rgba(242, 215, 230, 0.6)`, // Increased by ~30% for more prominent glow
   },
 });
 
