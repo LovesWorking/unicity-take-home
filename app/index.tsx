@@ -415,10 +415,10 @@ export default function MainScreen() {
             onChange={onSliderChange}
             isDisabled={!currentTrack}
           >
-            <Slider.Track>
-              <Slider.FilledTrack />
+            <Slider.Track bg={COLORS.secondary}>
+              <Slider.FilledTrack bg="#83CFF7" />
             </Slider.Track>
-            <Slider.Thumb />
+            <Slider.Thumb bg="#83CFF7" />
           </Slider>
 
           <HStack justifyContent="space-between" alignItems="center">

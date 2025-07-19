@@ -2,7 +2,7 @@
 export const COLORS = {
   // Primary colors
   primary: "#8BA4E3", // Light blue/periwinkle (#8BA4E3)
-  secondary: "#DC89E3", // Light purple/lavender (#DC89E3)
+  secondary: "#D5C2E6", // Light purple/lavender (#DC89E3)
 
   // Grayscale
   gray: {
