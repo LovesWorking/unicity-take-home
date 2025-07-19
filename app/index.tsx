@@ -23,8 +23,19 @@ import {
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
+
+const duration = 6000;
+const easing = Easing.linear;
 
 export default function MainScreen() {
+  const rotation = useSharedValue(0);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
@@ -249,6 +260,19 @@ export default function MainScreen() {
     });
   };
 
+  // Update spinning animation when play state changes
+  useEffect(() => {
+    if (isPlaying) {
+      rotation.value = withRepeat(withTiming(1, { duration, easing }), -1);
+    } else {
+      rotation.value = withTiming(rotation.value, { duration: 0 });
+    }
+  }, [isPlaying]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value * 360}deg` }],
+  }));
+
   return (
     <Box flex={1} bg={bgColor} safeArea px={4}>
       {/* Side Menu */}
@@ -356,18 +380,44 @@ export default function MainScreen() {
             size="300px"
             rounded="full"
             overflow="hidden"
-            shadow={6}
-            bg={currentTrack?.backgroundColor || "gray.100"}
+            position="relative"
           >
-            <Image
-              source={{
-                uri:
-                  currentTrack?.albumArt ||
-                  "https://via.placeholder.com/300x300/E5E5E5/9CA3AF?text=Select+Track",
+            <Animated.View
+              style={[{ width: "100%", height: "100%" }, animatedStyle]}
+            >
+              <Box
+                size="full"
+                rounded="full"
+                bg={currentTrack?.backgroundColor || "gray.100"}
+                position="absolute"
+                top={0}
+                left={0}
+              />
+              <Image
+                source={{
+                  uri:
+                    currentTrack?.albumArt ||
+                    "https://via.placeholder.com/300x300/E5E5E5/9CA3AF?text=Select+Track",
+                }}
+                alt="Album Art"
+                size="full"
+                resizeMode="cover"
+                style={{ borderRadius: 150 }}
+              />
+            </Animated.View>
+
+            {/* Center hole */}
+            <Box
+              position="absolute"
+              top="50%"
+              left="50%"
+              style={{
+                width: 40,
+                height: 40,
+                backgroundColor: COLORS.gray.white,
+                borderRadius: 20,
+                transform: [{ translateX: -20 }, { translateY: -20 }],
               }}
-              alt="Album Art"
-              size="full"
-              resizeMode="cover"
             />
           </Box>
         </Center>
