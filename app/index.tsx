@@ -7,6 +7,7 @@ import {
 } from "@/constants/AudioTracks";
 import { COLORS, TYPOGRAPHY } from "@/constants/Colors";
 import { Audio, AVPlaybackStatus } from "expo-av";
+import * as FileSystem from "expo-file-system";
 import {
   Box,
   Center,
@@ -18,6 +19,7 @@ import {
   Text,
   useColorModeValue,
   useDisclose,
+  useToast,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -30,7 +32,11 @@ export default function MainScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [downloadProgress, setDownloadProgress] = useState<{
+    [key: number]: number;
+  }>({});
   const { isOpen, onOpen, onClose } = useDisclose();
+  const toast = useToast();
 
   // Theme colors
   const bgColor = useColorModeValue(
@@ -70,6 +76,11 @@ export default function MainScreen() {
       setCurrentTrack(track);
     } catch (error) {
       console.error("Error loading audio:", error);
+      toast.show({
+        description: "Error loading audio track",
+        placement: "top",
+        duration: 2000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +105,11 @@ export default function MainScreen() {
       }
     } catch (error) {
       console.error("Error playing/pausing:", error);
+      toast.show({
+        description: "Error controlling playback",
+        placement: "top",
+        duration: 2000,
+      });
     }
   };
 
@@ -127,6 +143,52 @@ export default function MainScreen() {
       await sound.setPositionAsync(newPosition);
     } catch (error) {
       console.error("Error seeking:", error);
+    }
+  };
+
+  // Download track
+  const downloadTrack = async (track: AudioTrack) => {
+    const fileName = `${track.title.replace(/\s+/g, "_")}_${track.id}.m4a`;
+    const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+
+    try {
+      const downloadResumable = FileSystem.createDownloadResumable(
+        track.url,
+        fileUri,
+        {},
+        (downloadProgress) => {
+          const progress =
+            downloadProgress.totalBytesWritten /
+            downloadProgress.totalBytesExpectedToWrite;
+          setDownloadProgress((prev) => ({
+            ...prev,
+            [track.id]: progress * 100,
+          }));
+        }
+      );
+
+      const result = await downloadResumable.downloadAsync();
+      if (result?.uri) {
+        toast.show({
+          description: `Downloaded: ${track.title}`,
+          placement: "top",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error downloading:", error);
+      toast.show({
+        description: "Error downloading track",
+        placement: "top",
+        duration: 2000,
+      });
+    } finally {
+      // Clear progress after download completes or fails
+      setDownloadProgress((prev) => {
+        const newProgress = { ...prev };
+        delete newProgress[track.id];
+        return newProgress;
+      });
     }
   };
 
@@ -181,30 +243,52 @@ export default function MainScreen() {
                   }}
                   py={2}
                 >
-                  <HStack space={3} alignItems="center">
-                    <Image
-                      source={{ uri: track.albumArt }}
-                      alt={track.title}
-                      size="xs"
-                      rounded="sm"
+                  <HStack
+                    space={3}
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <HStack space={3} alignItems="center" flex={1}>
+                      <Image
+                        source={{ uri: track.albumArt }}
+                        alt={track.title}
+                        size="xs"
+                        rounded="sm"
+                      />
+                      <VStack flex={1}>
+                        <Text
+                          color={textColor}
+                          fontWeight="medium"
+                          fontFamily={TYPOGRAPHY.fontFamily}
+                        >
+                          {track.title}
+                        </Text>
+                        <Text
+                          color={COLORS.gray.medium}
+                          fontSize="sm"
+                          fontFamily={TYPOGRAPHY.fontFamily}
+                        >
+                          {track.artist}
+                        </Text>
+                      </VStack>
+                    </HStack>
+                    <IconButton
+                      name="download"
+                      color={iconColor}
+                      onPress={() => downloadTrack(track)}
+                      disabled={downloadProgress[track.id] !== undefined}
+                      p={2}
                     />
-                    <VStack>
-                      <Text
-                        color={textColor}
-                        fontWeight="medium"
-                        fontFamily={TYPOGRAPHY.fontFamily}
-                      >
-                        {track.title}
-                      </Text>
-                      <Text
-                        color={COLORS.gray.medium}
-                        fontSize="sm"
-                        fontFamily={TYPOGRAPHY.fontFamily}
-                      >
-                        {track.artist}
-                      </Text>
-                    </VStack>
                   </HStack>
+                  {downloadProgress[track.id] !== undefined && (
+                    <Box w="100%" h={1} bg="gray.200" mt={2}>
+                      <Box
+                        h="100%"
+                        bg={iconColor}
+                        style={{ width: `${downloadProgress[track.id]}%` }}
+                      />
+                    </Box>
+                  )}
                 </Pressable>
               ))}
             </ScrollView>
@@ -233,7 +317,7 @@ export default function MainScreen() {
             rounded="full"
             overflow="hidden"
             shadow={6}
-            bg="gray.100"
+            bg={currentTrack?.backgroundColor || "gray.100"}
           >
             <Image
               source={{
