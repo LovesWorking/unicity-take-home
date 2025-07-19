@@ -35,6 +35,9 @@ export default function MainScreen() {
   const [downloadProgress, setDownloadProgress] = useState<{
     [key: number]: number;
   }>({});
+  const [isMuted, setIsMuted] = useState(false);
+  const [isShuffleOn, setIsShuffleOn] = useState(false);
+  const [isRepeatOn, setIsRepeatOn] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclose();
   const toast = useToast();
 
@@ -210,8 +213,44 @@ export default function MainScreen() {
 
   const sliderValue = duration > 0 ? (position / duration) * 100 : 0;
 
+  const toggleMute = async () => {
+    if (!sound) return;
+    try {
+      const status = await sound.getStatusAsync();
+      if (status.isLoaded) {
+        await sound.setIsMutedAsync(!isMuted);
+        setIsMuted(!isMuted);
+      }
+    } catch (error) {
+      console.error("Error toggling mute:", error);
+      toast.show({
+        description: "Error controlling volume",
+        placement: "top",
+        duration: 2000,
+      });
+    }
+  };
+
+  const toggleShuffle = () => {
+    setIsShuffleOn(!isShuffleOn);
+    toast.show({
+      description: `Shuffle ${!isShuffleOn ? "enabled" : "disabled"}`,
+      placement: "top",
+      duration: 1000,
+    });
+  };
+
+  const toggleRepeat = () => {
+    setIsRepeatOn(!isRepeatOn);
+    toast.show({
+      description: `Repeat ${!isRepeatOn ? "enabled" : "disabled"}`,
+      placement: "top",
+      duration: 1000,
+    });
+  };
+
   return (
-    <Box flex={1} bg={bgColor} safeArea>
+    <Box flex={1} bg={bgColor} safeArea px={4}>
       {/* Side Menu */}
       {isOpen && (
         <Box
@@ -223,8 +262,9 @@ export default function MainScreen() {
           bg={bgColor}
           zIndex={1}
           shadow={9}
+          px={4}
         >
-          <VStack flex={1} space={4} p={4}>
+          <VStack flex={1} space={4} py={4}>
             <Text
               fontSize="xl"
               fontWeight="bold"
@@ -353,18 +393,7 @@ export default function MainScreen() {
 
         {/* Progress Slider */}
         <VStack space={3}>
-          <Slider
-            value={sliderValue}
-            onChange={onSliderChange}
-            isDisabled={!currentTrack}
-          >
-            <Slider.Track>
-              <Slider.FilledTrack />
-            </Slider.Track>
-            <Slider.Thumb />
-          </Slider>
-
-          <HStack justifyContent="space-between">
+          <HStack justifyContent="space-between" alignItems="center">
             <Text
               fontSize="sm"
               color={COLORS.gray.medium}
@@ -380,27 +409,67 @@ export default function MainScreen() {
               {formatTime(duration)}
             </Text>
           </HStack>
+
+          <Slider
+            value={sliderValue}
+            onChange={onSliderChange}
+            isDisabled={!currentTrack}
+          >
+            <Slider.Track>
+              <Slider.FilledTrack />
+            </Slider.Track>
+            <Slider.Thumb />
+          </Slider>
+
+          <HStack justifyContent="space-between" alignItems="center">
+            <IconButton
+              name={isMuted ? "volume-x" : "volume-2"}
+              color={iconColor}
+              onPress={toggleMute}
+              disabled={!currentTrack}
+              size={24}
+            />
+            <HStack space={4} alignItems="center">
+              <IconButton
+                name="repeat"
+                color={isRepeatOn ? COLORS.primary : iconColor}
+                onPress={toggleRepeat}
+                disabled={!currentTrack}
+                size={20}
+              />
+              <IconButton
+                name="shuffle"
+                color={isShuffleOn ? COLORS.primary : iconColor}
+                onPress={toggleShuffle}
+                disabled={!currentTrack}
+                size={20}
+              />
+            </HStack>
+          </HStack>
         </VStack>
 
         {/* Control Buttons */}
-        <HStack space={16} justifyContent="center" alignItems="center" mb={8}>
+        <HStack space={12} justifyContent="center" alignItems="center" mb={8}>
           <IconButton
             name="skip-back"
             color={iconColor}
             onPress={seekBackward}
             disabled={!currentTrack}
+            size={31}
           />
           <IconButton
             name={isPlaying ? "pause" : "play"}
             color={iconColor}
             onPress={playPause}
             disabled={!currentTrack || isLoading}
+            size={31}
           />
           <IconButton
             name="skip-forward"
             color={iconColor}
             onPress={seekForward}
             disabled={!currentTrack}
+            size={31}
           />
         </HStack>
       </VStack>
