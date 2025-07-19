@@ -1,3 +1,5 @@
+import { IconButton } from "@/components/ui/IconButton";
+import { SearchInput } from "@/components/ui/SearchInput";
 import {
   AUDIO_CONFIG,
   AudioTrack,
@@ -10,7 +12,6 @@ import {
   Center,
   HStack,
   Image,
-  Input,
   Pressable,
   ScrollView,
   Slider,
@@ -20,7 +21,6 @@ import {
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import Feather from "react-native-vector-icons/Feather";
 
 export default function MainScreen() {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -216,23 +216,13 @@ export default function MainScreen() {
       <VStack flex={1} space={6} px={4}>
         {/* Header with Menu and Search */}
         <HStack space={4} alignItems="center" pt={4}>
-          <Pressable onPress={onOpen} p={2} _pressed={{ opacity: 0.7 }}>
-            <Feather name="menu" size={24} color={iconColor} />
-          </Pressable>
-          <Input
-            flex={1}
+          <IconButton name="menu" color={iconColor} onPress={onOpen} p={2} />
+          <SearchInput
             placeholder="Search tracks..."
             value={searchQuery}
             onChangeText={setSearchQuery}
             bg={inputBgColor}
-            borderRadius="full"
-            py={2}
-            px={4}
-            InputLeftElement={
-              <Box pl={2}>
-                <Feather name="search" size={20} color={iconColor} />
-              </Box>
-            }
+            iconColor={iconColor}
           />
         </HStack>
 
@@ -310,45 +300,24 @@ export default function MainScreen() {
 
         {/* Control Buttons */}
         <HStack space={16} justifyContent="center" alignItems="center" mb={8}>
-          {/* Previous Button */}
-          <Pressable
+          <IconButton
+            name="skip-back"
+            color={iconColor}
             onPress={seekBackward}
             disabled={!currentTrack}
-            opacity={!currentTrack ? 0.5 : 1}
-            _pressed={{ opacity: 0.7 }}
-          >
-            <Box w="24px" h="24px" justifyContent="center" alignItems="center">
-              <Feather name="skip-back" size={24} color={iconColor} />
-            </Box>
-          </Pressable>
-
-          {/* Play/Pause Button */}
-          <Pressable
+          />
+          <IconButton
+            name={isPlaying ? "pause" : "play"}
+            color={iconColor}
             onPress={playPause}
             disabled={!currentTrack || isLoading}
-            opacity={!currentTrack || isLoading ? 0.5 : 1}
-            _pressed={{ opacity: 0.7 }}
-          >
-            <Box w="24px" h="24px" justifyContent="center" alignItems="center">
-              <Feather
-                name={isPlaying ? "pause" : "play"}
-                size={24}
-                color={iconColor}
-              />
-            </Box>
-          </Pressable>
-
-          {/* Next Button */}
-          <Pressable
+          />
+          <IconButton
+            name="skip-forward"
+            color={iconColor}
             onPress={seekForward}
             disabled={!currentTrack}
-            opacity={!currentTrack ? 0.5 : 1}
-            _pressed={{ opacity: 0.7 }}
-          >
-            <Box w="24px" h="24px" justifyContent="center" alignItems="center">
-              <Feather name="skip-forward" size={24} color={iconColor} />
-            </Box>
-          </Pressable>
+          />
         </HStack>
       </VStack>
 
