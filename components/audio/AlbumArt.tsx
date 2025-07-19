@@ -1,12 +1,14 @@
 import { AudioTrack } from "@/constants/AudioTracks";
 import { COLORS } from "@/constants/Colors";
 import { Box, Center } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Image, StyleSheet } from "react-native";
 import Animated, {
+  cancelAnimation,
   Easing,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
   withTiming,
 } from "react-native-reanimated";
 
@@ -32,40 +34,88 @@ export const AlbumArt: React.FC<AlbumArtProps> = ({
   isSeeking,
 }) => {
   const rotation = useSharedValue(0);
+  const prevPosition = useRef(position);
+  const isSeekingBackwards = useRef(false);
 
-  // Calculate rotation angle based on position and duration
-  const calculateRotation = (
-    currentPosition: number,
-    trackDuration: number
-  ) => {
-    if (trackDuration === 0) return 0;
-    return (currentPosition / trackDuration) * 360;
-  };
-
-  // Update rotation when position changes (during playback)
+  // Track seeking direction
   useEffect(() => {
-    if (!isSeeking && duration > 0) {
-      const targetRotation = calculateRotation(position, duration);
+    if (isSeeking) {
+      // Only check direction during active seeking, not during normal playback updates
+      const positionDiff = position - prevPosition.current;
+      const significantChange = Math.abs(positionDiff) > 1000; // 1 second threshold
 
-      if (isPlaying) {
-        // Smooth animation during playback
-        rotation.value = withTiming(targetRotation, {
-          duration: 100,
-          easing: Easing.linear,
-        });
-      } else {
-        // Immediate update when paused
-        rotation.value = targetRotation;
+      if (significantChange) {
+        isSeekingBackwards.current = positionDiff < 0;
       }
+    } else {
+      // Reset seeking direction when not seeking
+      isSeekingBackwards.current = false;
     }
-  }, [position, duration, isPlaying, isSeeking, rotation]);
+    prevPosition.current = position;
+  }, [position, isSeeking]);
+
+  // Handle rotation based on playback and seeking state
+  useEffect(() => {
+    if (isSeeking) {
+      // During seeking, rotate based on direction
+      if (isSeekingBackwards.current) {
+        // Rotate backwards when seeking backwards
+        rotation.value = withRepeat(
+          withTiming(-360, {
+            duration: 2000, // Faster rotation during seeking
+            easing: Easing.linear,
+          }),
+          -1,
+          false
+        );
+      } else {
+        // Rotate forwards when seeking forwards
+        rotation.value = withRepeat(
+          withTiming(360, {
+            duration: 2000, // Faster rotation during seeking
+            easing: Easing.linear,
+          }),
+          -1,
+          false
+        );
+      }
+    } else if (isPlaying) {
+      // Normal forward rotation when playing
+      rotation.value = withRepeat(
+        withTiming(360, {
+          duration: 10000, // 10 seconds for one full rotation
+          easing: Easing.linear,
+        }),
+        -1,
+        false
+      );
+    } else {
+      // Stop rotation when paused
+      cancelAnimation(rotation);
+    }
+  }, [isPlaying, isSeeking, rotation]);
 
   // Reset rotation when track changes
   useEffect(() => {
     if (currentTrack) {
+      cancelAnimation(rotation);
       rotation.value = 0;
+      prevPosition.current = 0;
+      isSeekingBackwards.current = false;
+
+      // If playing when track changes, start rotation after reset
+      if (isPlaying && !isSeeking) {
+        rotation.value = withRepeat(
+          withTiming(360, {
+            duration: 10000,
+            easing: Easing.linear,
+          }),
+          -1,
+          false
+        );
+      }
     }
-  }, [currentTrack, rotation]);
+  }, [currentTrack, rotation, isPlaying, isSeeking]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
