@@ -11,8 +11,12 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio"]
-      }
+        "UIBackgroundModes": [
+          "audio",
+          "audio"
+        ]
+      },
+      "bundleIdentifier": "com.lovesworking.unicitytakehome"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,8 +29,11 @@
         "WAKE_LOCK",
         "FOREGROUND_SERVICE",
         "ACCESS_NETWORK_STATE",
-        "MODIFY_AUDIO_SETTINGS"
-      ]
+        "MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.lovesworking.unicitytakehome"
     },
     "web": {
       "bundler": "metro",

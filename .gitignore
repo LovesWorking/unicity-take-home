@@ -2,6 +2,11 @@
 
 # dependencies
 node_modules/
+watermelon-db-clone/
+
+# Lock files (except pnpm)
+package-lock.json
+yarn.lock
 
 # Expo
 .expo/
@@ -10,7 +15,6 @@ web-build/
 expo-env.d.ts
 
 # Native
-.kotlin/
 *.orig.*
 *.jks
 *.p8
@@ -31,9 +35,46 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # typescript
 *.tsbuildinfo
 
 app-example
+
+# Expo Router
+.expo-router/
+ios/
+android/
+
+# Sensitive files
+*firebase-adminsdk*.json
+google-services.json
+*.keystore
+
+thryve-prod-firebase-adminsdk-siuk4-22b6e892dc.json
+thryve-prod-1bedec64ac40.json
+credentials.json
+
+# ESLint
+.eslintcache
+
+# Sync testing files
+new-sync/*
+
+# tmp/db/watermelon.db - local db for testing
+tmp/db/watermelon.db
+
+# WatermelonDB files
+tmp/db/
+tmp/db-android/
+*.db
+
+# Tunnel files
+tunnel-*.log
+tunnel-*.txt
+tunnel-*.json
