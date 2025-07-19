@@ -12,11 +12,11 @@
 
 ### Phase 2: Project Structure Setup
 
-- [ ] Create audio player screen component
-- [ ] Create audio list screen component
-- [ ] Set up navigation structure between screens
+- [x] Create audio player screen component
+- [x] Create audio list screen component
+- [x] Set up navigation structure between screens
 - [ ] Create shared components folder for reusable UI elements
-- [ ] Set up constants for audio URLs and app configuration
+- [x] Set up constants for audio URLs and app configuration
 
 ## 🎵 Core Audio Features
 

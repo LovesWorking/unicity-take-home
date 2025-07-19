@@ -1,26 +1,38 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+// Color palette from design
+export const COLORS = {
+  // Primary colors
+  primary: "#8BA4E3", // Light blue/periwinkle (#8BA4E3)
+  secondary: "#DC89E3", // Light purple/lavender (#DC89E3)
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+  // Grayscale
+  gray: {
+    light: "#BABABA", // Light gray (#BABABA)
+    medium: "#BEBEBE", // Medium gray (#BEBEBE)
+    white: "#FCFCFC", // Off-white (#FCFCFC)
+  },
 
-export const Colors = {
+  // Theme colors
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    background: "#FCFCFC",
+    text: "#2C2C2C",
+    subtext: "#8C8C8C",
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    background: "#2C2C2C",
+    text: "#FCFCFC",
+    subtext: "#BEBEBE",
+  },
+};
+
+// Typography
+export const TYPOGRAPHY = {
+  fontFamily: "Gill Sans", // As specified in the design
+  sizes: {
+    xs: 12,
+    sm: 14,
+    md: 16,
+    lg: 20,
+    xl: 24,
+    "2xl": 32,
   },
 };
