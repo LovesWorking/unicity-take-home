@@ -2,13 +2,19 @@ import { AudioTrack } from "@/constants/AudioTracks";
 import { COLORS } from "@/constants/Colors";
 import { Box, Center } from "native-base";
 import React, { useEffect } from "react";
-import { Image } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+
+const styles = StyleSheet.create({
+  albumArtShadow: {
+    boxShadow: `0px 0px 40px 15px rgba(213, 194, 230, 0.6)`, // More prominent glow effect like the reference image
+  },
+});
 
 interface AlbumArtProps {
   currentTrack: AudioTrack | null;
@@ -26,14 +32,6 @@ export const AlbumArt: React.FC<AlbumArtProps> = ({
   isSeeking,
 }) => {
   const rotation = useSharedValue(0);
-
-  // Debug logs
-  console.log("AlbumArt render:", {
-    hasTrack: !!currentTrack,
-    trackTitle: currentTrack?.title,
-    hasAlbumArt: !!currentTrack?.albumArt,
-    isPlaying,
-  });
 
   // Calculate rotation angle based on position and duration
   const calculateRotation = (
@@ -65,7 +63,6 @@ export const AlbumArt: React.FC<AlbumArtProps> = ({
   // Reset rotation when track changes
   useEffect(() => {
     if (currentTrack) {
-      console.log("Resetting rotation for new track:", currentTrack.title);
       rotation.value = 0;
     }
   }, [currentTrack, rotation]);
@@ -74,10 +71,8 @@ export const AlbumArt: React.FC<AlbumArtProps> = ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
-  // For debugging, let's try a simple test image first
-  const imageUri = currentTrack?.albumArt || "https://picsum.photos/300/300";
-
-  console.log("AlbumArt rendering with image URI:", imageUri);
+  const imageUri =
+    currentTrack?.albumArt || require("@/assets/images/default.jpg");
 
   return (
     <Center flex={1}>
@@ -87,20 +82,25 @@ export const AlbumArt: React.FC<AlbumArtProps> = ({
         rounded="full"
         overflow="hidden"
         position="relative"
+        style={styles.albumArtShadow}
       >
         <Animated.View
           style={[{ width: "100%", height: "100%" }, animatedStyle]}
         >
           <Image
-            source={{ uri: imageUri }}
+            source={typeof imageUri === "string" ? { uri: imageUri } : imageUri}
             resizeMode="cover"
             style={{
               width: "100%",
               height: "100%",
               borderRadius: 150,
             }}
-            onError={(error) => console.error("Image load error:", error)}
+            onError={(error) => {
+              console.error("Image load error:", error);
+              // Could set a state here to force fallback to default image if needed
+            }}
             onLoad={() => console.log("Image loaded successfully:", imageUri)}
+            defaultSource={require("@/assets/images/default.jpg")}
           />
         </Animated.View>
 

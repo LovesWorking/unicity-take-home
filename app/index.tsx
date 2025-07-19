@@ -60,11 +60,6 @@ export default function MainScreen() {
   );
 
   const handleTrackSelect = (track: AudioTrack) => {
-    console.log("Track selected in MainScreen:", {
-      title: track.title,
-      artist: track.artist,
-      albumArt: track.albumArt,
-    });
     loadAudio(track);
   };
 

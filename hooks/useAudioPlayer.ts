@@ -63,21 +63,12 @@ export const useAudioPlayer = (): UseAudioPlayerReturn => {
 
   // Load audio track
   const loadAudio = async (track: AudioTrack) => {
-    console.log("Loading audio track:", {
-      title: track.title,
-      artist: track.artist,
-      url: track.url,
-      albumArt: track.albumArt,
-    });
-
     try {
       setIsLoading(true);
       if (sound) {
-        console.log("Unloading previous sound");
         await sound.unloadAsync();
       }
 
-      console.log("Creating new audio sound");
       const { sound: audioSound } = await Audio.Sound.createAsync(
         { uri: track.url },
         { shouldPlay: false }
@@ -86,8 +77,6 @@ export const useAudioPlayer = (): UseAudioPlayerReturn => {
       audioSound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
       setSound(audioSound);
       setCurrentTrack(track);
-
-      console.log("Audio track loaded successfully:", track.title);
     } catch (error) {
       console.error("Error loading audio:", error);
       toast.show({

@@ -93,12 +93,6 @@ export const TrackList: React.FC<TrackListProps> = ({
   };
 
   const handleTrackSelect = (track: AudioTrack) => {
-    console.log("Track selected in TrackList:", {
-      title: track.title,
-      artist: track.artist,
-      albumArt: track.albumArt,
-    });
-
     onTrackSelect(track);
     onClose();
   };
