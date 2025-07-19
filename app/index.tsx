@@ -4,14 +4,11 @@ import {
   SAMPLE_TRACKS,
 } from "@/constants/AudioTracks";
 import { COLORS, TYPOGRAPHY } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import {
   Box,
   Center,
   HStack,
-  Icon,
-  IconButton,
   Image,
   Input,
   Pressable,
@@ -23,6 +20,7 @@ import {
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import Feather from "react-native-vector-icons/Feather";
 
 export default function MainScreen() {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -218,10 +216,9 @@ export default function MainScreen() {
       <VStack flex={1} space={6} px={4}>
         {/* Header with Menu and Search */}
         <HStack space={4} alignItems="center" pt={4}>
-          <IconButton
-            icon={<Icon as={Ionicons} name="menu" size={6} color={iconColor} />}
-            onPress={onOpen}
-          />
+          <Pressable onPress={onOpen} p={2} _pressed={{ opacity: 0.7 }}>
+            <Feather name="menu" size={24} color={iconColor} />
+          </Pressable>
           <Input
             flex={1}
             placeholder="Search tracks..."
@@ -232,13 +229,9 @@ export default function MainScreen() {
             py={2}
             px={4}
             InputLeftElement={
-              <Icon
-                as={Ionicons}
-                name="search"
-                size={5}
-                ml={2}
-                color={iconColor}
-              />
+              <Box pl={2}>
+                <Feather name="search" size={20} color={iconColor} />
+              </Box>
             }
           />
         </HStack>
@@ -325,27 +318,7 @@ export default function MainScreen() {
             _pressed={{ opacity: 0.7 }}
           >
             <Box w="24px" h="24px" justifyContent="center" alignItems="center">
-              <Box
-                w="3px"
-                h="14px"
-                bg={iconColor}
-                position="absolute"
-                left="2px"
-                borderRadius="full"
-              />
-              <Box
-                w="0"
-                h="0"
-                borderTopWidth="7px"
-                borderBottomWidth="7px"
-                borderRightWidth="12px"
-                borderTopColor="transparent"
-                borderBottomColor="transparent"
-                borderRightColor={iconColor}
-                position="absolute"
-                right="2px"
-                style={{ transform: [{ rotate: "180deg" }] }}
-              />
+              <Feather name="skip-back" size={24} color={iconColor} />
             </Box>
           </Pressable>
 
@@ -356,50 +329,13 @@ export default function MainScreen() {
             opacity={!currentTrack || isLoading ? 0.5 : 1}
             _pressed={{ opacity: 0.7 }}
           >
-            {isPlaying ? (
-              <Box
-                w="24px"
-                h="24px"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Box
-                  w="3px"
-                  h="14px"
-                  bg={iconColor}
-                  position="absolute"
-                  left="6px"
-                  borderRadius="full"
-                />
-                <Box
-                  w="3px"
-                  h="14px"
-                  bg={iconColor}
-                  position="absolute"
-                  right="6px"
-                  borderRadius="full"
-                />
-              </Box>
-            ) : (
-              <Box
-                w="24px"
-                h="24px"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Box
-                  w="0"
-                  h="0"
-                  borderTopWidth="7px"
-                  borderBottomWidth="7px"
-                  borderLeftWidth="14px"
-                  borderTopColor="transparent"
-                  borderBottomColor="transparent"
-                  borderLeftColor={iconColor}
-                  ml={2}
-                />
-              </Box>
-            )}
+            <Box w="24px" h="24px" justifyContent="center" alignItems="center">
+              <Feather
+                name={isPlaying ? "pause" : "play"}
+                size={24}
+                color={iconColor}
+              />
+            </Box>
           </Pressable>
 
           {/* Next Button */}
@@ -410,26 +346,7 @@ export default function MainScreen() {
             _pressed={{ opacity: 0.7 }}
           >
             <Box w="24px" h="24px" justifyContent="center" alignItems="center">
-              <Box
-                w="3px"
-                h="14px"
-                bg={iconColor}
-                position="absolute"
-                right="2px"
-                borderRadius="full"
-              />
-              <Box
-                w="0"
-                h="0"
-                borderTopWidth="7px"
-                borderBottomWidth="7px"
-                borderRightWidth="12px"
-                borderTopColor="transparent"
-                borderBottomColor="transparent"
-                borderRightColor={iconColor}
-                position="absolute"
-                left="2px"
-              />
+              <Feather name="skip-forward" size={24} color={iconColor} />
             </Box>
           </Pressable>
         </HStack>
